@@ -47,23 +47,32 @@ async def cmd_start(message: types.Message):
 @dp.message()
 async def forward_to_vk(message: types.Message):
     try:
-        # Игнорируем команды (чтобы не пересылать /start и т.д.)
+        # Игнорируем команды
         if message.text and message.text.startswith('/'):
+            logging.info("Игнорируем команду")
             return
 
-        # Формируем текст с именем автора
+        # Логируем полученное сообщение
+        logging.info(f"Получено сообщение из TG: {message.text}")
+
         user_name = message.from_user.full_name
         text_to_send = f"👤 {user_name} (TG):\n{message.text}"
 
-        # Отправляем сообщение в группу VK (используем peer_id)
+        # Логируем, что пытаемся отправить
+        logging.info(f"Пытаемся отправить в VK (peer_id={VK_GROUP_ID}): {text_to_send}")
+
+        # Отправляем
         vk_api.messages.send(
-            peer_id=VK_GROUP_ID,  # Отрицательное число, например -123456789
+            peer_id=VK_GROUP_ID,
             message=text_to_send,
             random_id=0
         )
-        logging.info(f"Сообщение переслано в VK: {text_to_send}")
+        logging.info("✅ Сообщение успешно отправлено в VK")
     except Exception as e:
-        logging.error(f"Ошибка при отправке в VK: {e}")
+        logging.error(f"❌ Ошибка при отправке в VK: {e}")
+        # Выводим полную информацию об ошибке
+        import traceback
+        logging.error(traceback.format_exc())
 
 # --- 6. Функция для прослушивания VK → Telegram (Long Poll) ---
 async def listen_vk():
