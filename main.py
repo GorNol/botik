@@ -43,9 +43,10 @@ async def forward_to_vk(message: types.Message):
         user_name = message.from_user.full_name
         text_to_send = f"👤 {user_name} (TG):\n{message.text}"
 
-        # Отправляем сообщение в VK
+        # Отправляем сообщение в группу VK
+        # ВАЖНО: VK_GROUP_ID должен быть с минусом (например, -123456789)
         vk_api.messages.send(
-            peer_id=VK_GROUP_ID,  # ID группы или пользователя
+            peer_id=int(os.getenv('VK_GROUP_ID')),  # ID группы с минусом
             message=text_to_send,
             random_id=0
         )
