@@ -1,0 +1,3 @@
+aiogram
+vk-api
+python-dotenv
